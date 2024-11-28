@@ -2,8 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { api } from "@/trpc/react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type formInput = {
     repoUrl: string;
@@ -13,9 +15,22 @@ type formInput = {
 
 const CreateProjectForm = () => {
     const { register, handleSubmit, reset } = useForm<formInput>();
+    const createProject = api.project.createProject.useMutation();
 
     function onSubmit(data: formInput) {
         window.alert(JSON.stringify(data, null, 2));
+        createProject.mutate({
+            name: data.projectName,
+            githubUrl: data.repoUrl,
+            githubToken: data.githubToken
+        }, {
+            onSuccess: () => {
+                toast.success("Project created successfully");
+            },
+            onError: (error) => {
+                toast.error("Failed to create project");
+            }
+        })
         return true;
     }
 
