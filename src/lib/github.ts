@@ -17,6 +17,8 @@ type Response = {
     commitDate: string;
 }
 
+
+
 export const getCommitHashes = async (githubUrl: string): Promise<Response[]> => {
     const [owner, repo] = githubUrl.split("/").slice(-2)
     if(!owner || !repo){
@@ -37,6 +39,8 @@ export const getCommitHashes = async (githubUrl: string): Promise<Response[]> =>
     }))
 }
 
+
+
 export const pollCommits = async (projectId: string) => {
     const { project, githubUrl } = await fetchProjectGithubUrl(projectId)
     const commitHashes = await getCommitHashes(githubUrl)
@@ -53,6 +57,7 @@ export const pollCommits = async (projectId: string) => {
 
     const commits = await db.commit.createMany({
         data: summaries.map((summary, index) => {
+            console.log(`processing commit ${index}`)
             return {
                 projectId: projectId,
                 commitHash: unprocessedCommits[index]!.commitHash,
@@ -68,6 +73,8 @@ export const pollCommits = async (projectId: string) => {
     return commits;
 }
 
+
+
 async function summariseCommit(githubUrl: string, commitHash: string){
 // get the diff, then pass the diff into ai
 const {data} = await axios.get(`${githubUrl}/commit/${commitHash}.diff`, {
@@ -77,6 +84,8 @@ const {data} = await axios.get(`${githubUrl}/commit/${commitHash}.diff`, {
 })
 return await aiSummariseCommit(data) || ""
 }
+
+
 
 
 async function fetchProjectGithubUrl(projectId: string) {
@@ -93,6 +102,8 @@ async function fetchProjectGithubUrl(projectId: string) {
     }
     return { project, githubUrl: project?.githubUrl }
 }
+
+
 
 async function filterUnProcessedCommits(projectId: string, commitHashes: Response[]) {
     const processedCommits = await db.commit.findMany({
