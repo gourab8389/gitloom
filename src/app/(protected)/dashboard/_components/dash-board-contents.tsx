@@ -36,7 +36,7 @@ const DashboardPageContents = () => {
 
       <div className="mt-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-5">
-          <div className="">AskQuestionsCard </div>
+          <div className="">AskQuestionsCard</div>
           <div className="">MeetingCard</div>
         </div>
       </div>
