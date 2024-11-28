@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import useRefetch from "@/hooks/use-refetch";
 import { api } from "@/trpc/react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -16,6 +17,7 @@ type formInput = {
 const CreateProjectForm = () => {
     const { register, handleSubmit, reset } = useForm<formInput>();
     const createProject = api.project.createProject.useMutation();
+    const refetch = useRefetch();
 
     function onSubmit(data: formInput) {
         createProject.mutate({
@@ -25,6 +27,8 @@ const CreateProjectForm = () => {
         }, {
             onSuccess: () => {
                 toast.success("Project created successfully");
+                refetch();
+                reset();
             },
             onError: () => {
                 toast.error("Failed to create project");
@@ -34,10 +38,10 @@ const CreateProjectForm = () => {
     }
 
   return (
-    <div className="flex items-center gap-12 h-full justify-center">
+    <div className="flex md:flex-row flex-col items-center md:gap-12 gap-6 h-full justify-center">
       <Image src={"/create/create-form-image.jpg"} alt="Create Project" width={250} height={250} className="shrink-0 rounded-lg"/>
-      <div className="">
-        <div className="">
+      <div>
+        <div>
             <h1 className="font-semibold text-2xl">
                 Link your Github repository
             </h1>
@@ -46,7 +50,7 @@ const CreateProjectForm = () => {
             </p>
         </div>
         <div className="h-4"></div>
-        <div className="">
+        <div>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
                 <Input
                 {...register("projectName", {required: true})}
