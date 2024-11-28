@@ -112,7 +112,8 @@ const AppSidebar = () => {
                 );
               })}
               <div className="h-2"></div>
-              <SidebarMenuItem >
+              {open && (
+                <SidebarMenuItem >
                 <Link href={"/create"}>
                   <Button variant={"outline"} className="w-full py-3 justify-start">
                     <Plus/>
@@ -120,6 +121,7 @@ const AppSidebar = () => {
                   </Button>
                 </Link>
               </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
