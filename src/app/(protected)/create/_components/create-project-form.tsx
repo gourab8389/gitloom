@@ -18,7 +18,6 @@ const CreateProjectForm = () => {
     const createProject = api.project.createProject.useMutation();
 
     function onSubmit(data: formInput) {
-        window.alert(JSON.stringify(data, null, 2));
         createProject.mutate({
             name: data.projectName,
             githubUrl: data.repoUrl,
@@ -27,7 +26,7 @@ const CreateProjectForm = () => {
             onSuccess: () => {
                 toast.success("Project created successfully");
             },
-            onError: (error) => {
+            onError: () => {
                 toast.error("Failed to create project");
             }
         })
@@ -63,9 +62,8 @@ const CreateProjectForm = () => {
                 <Input
                 {...register("githubToken")}
                 placeholder="Github Token (Optional)"
-                required
                 />
-                <Button type="submit" className="mt-2 w-fit">
+                <Button type="submit" className="mt-2 w-fit" disabled={createProject.isPending}>
                     Create Project
                 </Button>
             </form>
