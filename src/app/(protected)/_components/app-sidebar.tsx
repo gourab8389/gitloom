@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -10,9 +11,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { Bot, CreditCard, LayoutDashboard, Presentation } from "lucide-react";
+import { Bot, CreditCard, LayoutDashboard, Plus, Presentation } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -46,22 +48,21 @@ const projects = [
   {
     name: "project 2",
   },
-  {
-    name: "project 3",
-  },
-  {
-    name: "project 4",
-  },
-  {
-    name: "project 5",
-  },
 ];
 
 const AppSidebar = () => {
   const pathname = usePathname();
+  const open = useSidebar();
   return (
     <Sidebar collapsible="icon" variant="floating">
-      <SidebarHeader>Logo</SidebarHeader>
+      <SidebarHeader>
+        <div className="flex items-center gap-2">
+        <h1 className="text-3xl font-bold">Logo</h1>
+        {open && (
+          <h1 className="text-xl font-bold text-primary/80">GitLoom</h1>
+        )}
+        </div>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -86,6 +87,7 @@ const AppSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
         <SidebarGroup>
           <SidebarGroupLabel>Your Projects</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -109,6 +111,15 @@ const AppSidebar = () => {
                   </SidebarMenuItem>
                 );
               })}
+              <div className="h-2"></div>
+              <SidebarMenuItem >
+                <Link href={"/create"}>
+                  <Button variant={"outline"} className="w-full py-3 justify-start">
+                    <Plus/>
+                    Create Project
+                  </Button>
+                </Link>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
