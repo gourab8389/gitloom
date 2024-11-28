@@ -55,11 +55,13 @@ const AppSidebar = () => {
   return (
     <Sidebar collapsible="icon" variant="floating">
       <SidebarHeader>
-        <div className="flex items-center gap-2">
+        <div>
+          <Link href={"/"} className="flex items-center gap-2 cursor-pointer">
           <h1 className="text-3xl font-bold">Logo</h1>
           {open && (
             <h1 className="text-xl font-bold text-primary/80">GitLoom</h1>
           )}
+          </Link>
         </div>
       </SidebarHeader>
       <SidebarContent>

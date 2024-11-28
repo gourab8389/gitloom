@@ -39,7 +39,8 @@ const CreateProjectForm = () => {
 
   return (
     <div className="flex md:flex-row flex-col items-center md:gap-12 gap-6 h-full justify-center">
-      <Image src={"/create/create-form-image.jpg"} alt="Create Project" width={250} height={250} className="shrink-0 rounded-lg"/>
+      <Image src={"/create/create-form-image.jpg"} alt="Create Project" width={250} height={250} className="shrink-0 rounded-lg hidden md:block"/>
+      <Image src={"/create/create-form-image.jpg"} alt="Create Project" width={400} height={400} className="shrink-0 rounded-lg md:hidden"/>
       <div>
         <div>
             <h1 className="font-semibold text-2xl">

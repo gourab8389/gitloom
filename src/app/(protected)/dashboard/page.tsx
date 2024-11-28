@@ -1,14 +1,9 @@
-"use client"
+import DashboardPageContents from "./_components/dash-board-contents";
 
-import { useUser } from "@clerk/nextjs"
 
 const DashboardPage = () => {
-  const { user } = useUser();
   return (
-    <div>
-      <div>{user?.firstName}</div>
-      <div>{user?.lastName}</div>
-    </div>
+    <DashboardPageContents/>
   )
 }
 
