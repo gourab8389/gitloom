@@ -44,6 +44,7 @@ export const aiSummariseCommit = async (diff: string) => {
     return response.response.text();
 }
 
+
 export async function summariesCode(doc: Document) {
     console.log("getting summaries for", doc.metadata.source);
     const code = doc.pageContent.slice(0, 10000);
@@ -58,4 +59,13 @@ export async function summariesCode(doc: Document) {
     ]);
 
     return response.response.text();
+}
+
+export async function generateEmbedding(summary: string) {
+    const model = genAI.getGenerativeModel({
+        model: "text-embedding-004"
+    })
+    const result = await model.embedContent([summary]);
+    const embedding = result.embedding
+    return embedding.values
 }
