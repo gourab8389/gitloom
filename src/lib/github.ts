@@ -7,8 +7,6 @@ export const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
 
-const githubUrl = "https://github.com/docker/genai-stack"
-
 type Response = {
     commitHash: string;
     commitMessage: string;
@@ -42,35 +40,53 @@ export const getCommitHashes = async (githubUrl: string): Promise<Response[]> =>
 
 
 export const pollCommits = async (projectId: string) => {
-    const { project, githubUrl } = await fetchProjectGithubUrl(projectId)
-    const commitHashes = await getCommitHashes(githubUrl)
-    const unprocessedCommits = await filterUnProcessedCommits(projectId, commitHashes);
-    const summaryResponses = await Promise.allSettled(unprocessedCommits.map(commit => {
-        return summariseCommit(githubUrl, commit.commitHash)
-    }))
-    const summaries = summaryResponses.map((response) => {
-        if(response.status === "fulfilled"){
-            return response.value as string
+    try {
+        const { project, githubUrl } = await fetchProjectGithubUrl(projectId)
+        console.log("Project GitHub URL:", githubUrl)
+
+        const commitHashes = await getCommitHashes(githubUrl)
+        console.log("Commit Hashes:", commitHashes.length)
+
+        const unprocessedCommits = await filterUnProcessedCommits(projectId, commitHashes);
+        console.log("Unprocessed Commits:", unprocessedCommits.length)
+
+        if (unprocessedCommits.length === 0) {
+            console.log("No new commits to process")
+            return { count: 0 }
         }
-        return ""
-    })
 
-    const commits = await db.commit.createMany({
-        data: summaries.map((summary, index) => {
-            console.log(`processing commit ${index}`)
-            return {
-                projectId: projectId,
-                commitHash: unprocessedCommits[index]!.commitHash,
-                commitMessage: unprocessedCommits[index]!.commitMessage,
-                commitAuthorName: unprocessedCommits[index]!.commitAuthorName,
-                commitAuthorAvatar: unprocessedCommits[index]!.commitAuthorAvatar,
-                commitDate: unprocessedCommits[index]!.commitDate,
-                summary
+        const summaryResponses = await Promise.allSettled(unprocessedCommits.map(commit => {
+            return summariseCommit(githubUrl, commit.commitHash)
+        }))
+        
+        const summaries = summaryResponses.map((response) => {
+            if(response.status === "fulfilled"){
+                return response.value as string
             }
+            console.error("Failed to process commit summary:", response)
+            return ""
         })
-    })
 
-    return commits;
+        const commits = await db.commit.createMany({
+            data: summaries.map((summary, index) => {
+                console.log(`processing commit ${index}`)
+                return {
+                    projectId: projectId,
+                    commitHash: unprocessedCommits[index]!.commitHash,
+                    commitMessage: unprocessedCommits[index]!.commitMessage,
+                    commitAuthorName: unprocessedCommits[index]!.commitAuthorName,
+                    commitAuthorAvatar: unprocessedCommits[index]!.commitAuthorAvatar,
+                    commitDate: unprocessedCommits[index]!.commitDate,
+                    summary
+                }
+            })
+        })
+        console.log(commits)
+        return commits;
+    } catch (error) {
+        console.error("Error in pollCommits:", error)
+        throw error
+    }
 }
 
 
@@ -82,7 +98,7 @@ const {data} = await axios.get(`${githubUrl}/commit/${commitHash}.diff`, {
         Accept: "application/vnd.github.v3.diff"
     }
 })
-return await aiSummariseCommit(data) || ""
+return await aiSummariseCommit(data) || "No difference found"
 }
 
 
@@ -115,5 +131,3 @@ async function filterUnProcessedCommits(projectId: string, commitHashes: Respons
 
     return unprocessedCommits;
 }
-
-await pollCommits("cm41enyhs0003w59zi33duruy").then(console.log)
