@@ -1,4 +1,6 @@
 import { GithubRepoLoader } from "@langchain/community/document_loaders/web/github"
+import { Document } from "@langchain/core/documents"
+import { summariesCode } from "./gemini"
 
 export const loadGithubRepo = async (githubUrl: string, githubToken?: string) => {
     const loader = new GithubRepoLoader(githubUrl, {
@@ -13,4 +15,14 @@ export const loadGithubRepo = async (githubUrl: string, githubToken?: string) =>
     return docs
 }
 
+export const indexGithubRepo = async (projectId: string, githubUrl: string, githubToken?: string) => {
+    const docs = await loadGithubRepo(githubUrl, githubToken)
+    const allEmbeddings = await generateEmbeddings(docs)
+}
+
+const generateEmbeddings = async (docs: Document[]) => {
+    return await Promise.all(docs.map(async doc => {
+        const summary = await summariesCode(doc)
+    }))
+}
 
