@@ -3,10 +3,12 @@
 import useProject from "@/hooks/use-project";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
+import { ExternalLink } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const CommitLog = () => {
-  const { projectId } = useProject();
+  const { projectId, project } = useProject();
   const { data: commits } = api.project.getCommits.useQuery({ projectId });
   return (
     <>
@@ -28,12 +30,28 @@ const CommitLog = () => {
               alt={commit.commitAuthorName}
               height={40}
               width={40}
-              className="rounded-full shrink-0 relative mt-3 size-8 flex-none bg-gray-50"
+              className="rounded-full shrink-0 relative mt-4 size-8 flex-none bg-gray-50"
               />
               <div className="flex-auto rounded-md bg-white p-3 ring-1 ring-inset ring-gray-200">
-                <p className="text-sm font-medium leading-6 text-gray-900">
-                    {commit.commitMessage}
-                </p>
+                <div className="flex justify-between gap-x-4">
+                    <Link href={`${project?.githubUrl}/commit/${commit.commitHash}`}target="_blank"
+                    className="py-0.5 text-xs leading-5 text-gray-500 space-x-2"
+                    >
+                        <span className="font-bold text-gray-900">
+                            {commit.commitAuthorName}
+                        </span>
+                        <span className="inline-flex items-center">
+                            commited
+                            <ExternalLink className="ml-1 size-4"/>
+                        </span>
+                    </Link>
+                </div>
+              <span className="font-semibold">
+                {commit.commitMessage}
+              </span>
+              <pre className="mt-2 whitespace-pre-wrap text-sm leading-0 text-gray-500">
+                {commit.summary}
+              </pre>
               </div>
               </>
             </li>
