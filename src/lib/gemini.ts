@@ -47,7 +47,8 @@ export const aiSummariseCommit = async (diff: string) => {
 
 export async function summariesCode(doc: Document) {
     console.log("getting summaries for", doc.metadata.source);
-    const code = doc.pageContent.slice(0, 10000);
+    try {
+        const code = doc.pageContent.slice(0, 10000);
     const response = await model.generateContent([
         `You are an intelligent senior sofware engineer who spacilises in onboarding junior software engineers onto projects.`,
         `You are onboarding a junior software engineer and explaning to them the purpose of the ${doc.metadata.source} file
@@ -59,6 +60,10 @@ export async function summariesCode(doc: Document) {
     ]);
 
     return response.response.text();
+    } catch (error) {
+        return "Error generating summary"
+    }
+    
 }
 
 export async function generateEmbedding(summary: string) {

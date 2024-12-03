@@ -21,7 +21,10 @@ export const indexGithubRepo = async (projectId: string, githubUrl: string, gith
     const allEmbeddings = await generateEmbeddings(docs)
     await Promise.allSettled(allEmbeddings.map(async (embedding, index) => {
         console.log(`processing ${index} of ${allEmbeddings.length}`)
-        if(!embedding) return
+        if(!embedding){
+            console.log("no embedding")
+            return
+        }
 
         const sourceCodeEmbedding = await db.sourceCodeEmbedding.create({
             data: {
@@ -34,7 +37,7 @@ export const indexGithubRepo = async (projectId: string, githubUrl: string, gith
 
         await db.$executeRaw`
         UPDATE "SourceCodeEmbedding"
-        SET "SummaryEmbedding" = ${embedding.embedding} :: vector
+        SET "summaryEmbedding" = ${embedding.embedding} :: vector
         WHERE "id" = ${sourceCodeEmbedding.id}
         `
     }))
