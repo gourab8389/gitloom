@@ -8,6 +8,7 @@ import useProject from "@/hooks/use-project";
 import React from "react";
 import { askQuestion } from "../actions";
 import { readStreamableValue } from "ai/rsc";
+import { Loader2 } from "lucide-react";
 
 const AskQuestionsCard = () => {
     const { project } = useProject();
@@ -20,18 +21,28 @@ const AskQuestionsCard = () => {
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(!project?.id) return;
+        
         setLoading(true);
         setOpen(true);
-
-        const { output, filesReferences } = await askQuestion(question, project.id);
-        setFilesReferences(filesReferences);
-
-        for await (const delta of readStreamableValue(output)) {
+        setAnswer("");
+        setFilesReferences([]);
+      
+        try {
+          const { output, filesReferences } = await askQuestion(question, project.id);
+          setFilesReferences(filesReferences);
+      
+          for await (const delta of readStreamableValue(output)) {
             if(delta){
-                setAnswer((ans) => ans + delta);
+              setAnswer((ans) => ans + delta);
             }
+          }
+        } catch (error) {
+          console.error("Error asking question:", error);
+          setAnswer("An error occurred while processing your question.");
+        } finally {
+          setLoading(false);
         }
-    }
+      }
 
   return (
     <>
@@ -39,9 +50,14 @@ const AskQuestionsCard = () => {
         <DialogContent>
         <DialogHeader>
             <DialogTitle>
-                <h1 className="text-lg font-bold text-primary">GitLoom</h1>
+                <p className="text-lg font-bold text-primary">GitLoom</p>
             </DialogTitle>
         </DialogHeader>
+        {loading ? <Loader2 className="animate-spin size-6" color="violet"/> : answer}
+        <h1>Files References</h1>
+        {filesReferences.map(file => {
+            return <span>{file.fileName}</span>
+        })}
         </DialogContent>
     </Dialog>
     <Card className="relative col-span-3">
