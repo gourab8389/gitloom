@@ -22,7 +22,6 @@ export const indexGithubRepo = async (projectId: string, githubUrl: string, gith
     await Promise.allSettled(allEmbeddings.map(async (embedding, index) => {
         console.log(`processing ${index} of ${allEmbeddings.length}`)
         if(!embedding){
-            console.log("no embedding")
             return
         }
 
