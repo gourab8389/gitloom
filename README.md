@@ -1,6 +1,6 @@
 # Gitloom
 
-This a new saas app.
+This a new  github saas app, which is help to check commit finding error and many more...
 
 ## What's next? How do I make an app with this?
 
