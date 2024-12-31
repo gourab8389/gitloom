@@ -1,5 +1,6 @@
 "use client";
 
+import Logo from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -56,12 +57,7 @@ const AppSidebar = () => {
     <Sidebar collapsible="icon" variant="floating">
       <SidebarHeader>
         <div>
-          <Link href={"/"} className="flex items-center gap-2 cursor-pointer">
-          <h1 className="text-3xl font-bold">Logo</h1>
-          {open && (
-            <h1 className="text-xl font-bold text-primary/80">GitLoom</h1>
-          )}
-          </Link>
+          <Logo/>
         </div>
       </SidebarHeader>
       <SidebarContent>
