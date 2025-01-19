@@ -5,6 +5,9 @@ const Footer = () => {
         <div className="flex items-center justify-center gap-2">
           Made by @gourab8389
         </div>
+        <div className="">
+          hello
+        </div>
       </div>
     </div>
   );
